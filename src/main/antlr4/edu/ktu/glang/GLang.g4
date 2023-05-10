@@ -27,7 +27,7 @@ intAddOp : '+' | '-' ;
 ifStatement : 'if' '(' expression relationOp expression ')' '{' statement '}'
     ('else' '{' statement '}') ;
 
-relationOp : '==' | '!=' ;
+relationOp : '==' | '!=' | '>' | '<' | '>=' | '<=';
 
 printStatement : PRINT '(' expression ')' ;
 
