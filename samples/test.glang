@@ -1,0 +1,8 @@
+int a = 42;
+print(a);
+
+if (a != 69) {
+  print(1);
+} else {
+  print(2);
+}
