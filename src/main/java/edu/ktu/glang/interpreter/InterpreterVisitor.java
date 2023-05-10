@@ -71,15 +71,22 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitIntAddOpExpression(GLangParser.IntAddOpExpressionContext ctx) {
-        Object val1 = visit(ctx.expression(0));
-        Object val2 = visit(ctx.expression(1));
-        return switch (ctx.intAddOp().getText()) {
-            case "+" -> (Integer) val1 + (Integer) val2;
-            case "-" -> (Integer) val1 - (Integer) val2;
-            default -> null;
-        };
+    public Integer visitIntAddOpExpression(GLangParser.IntAddOpExpressionContext ctx) {
+        Integer val1 = (Integer) visit(ctx.expression(0));
+        Integer val2 = (Integer) visit(ctx.expression(1));
+        String operator = ctx.intAddOp().getText();
+
+        if (val1 == null || val2 == null) {
+            throw new RuntimeException("Null value in arithmetic operation");
+        }
+
+        switch (operator) {
+            case "+": return val1 + val2;
+            case "-": return val1 - val2;
+            default: throw new RuntimeException("Unknown operator: " + operator);
+        }
     }
+
 
     @Override
     public Object visitIntMultiOpExpression(GLangParser.IntMultiOpExpressionContext ctx) {
@@ -98,4 +105,43 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
     public Object visitIfStatement(GLangParser.IfStatementContext ctx) {
         return this.ifStatementVisitor.visitIfStatement(ctx);
     }
+
+    @Override
+    public Void visitForLoop(GLangParser.ForLoopContext ctx) {
+        // Execute the initialization
+        visit(ctx.initialization());
+
+        // Loop while the condition is true
+        while ((boolean) visitCondition(ctx.condition())) {
+            // Execute the statements in the loop body
+            for (GLangParser.StatementContext stmt : ctx.statement()) {
+                visit(stmt);
+            }
+
+            // Execute the increment
+            visit(ctx.increment());
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object visitCondition(GLangParser.ConditionContext ctx) {
+        Integer left = (Integer) visit(ctx.expression(0));
+        Integer right = (Integer) visit(ctx.expression(1));
+        String operator = ctx.relationOp().getText();
+
+        switch (operator) {
+            case "==": return left.equals(right);
+            case "!=": return !left.equals(right);
+            case "<": return left < right;
+            case ">": return left > right;
+            case "<=": return left <= right;
+            case ">=": return left >= right;
+            default: throw new RuntimeException("Unknown operator: " + operator);
+        }
+    }
+
+
+
 }

@@ -7,6 +7,7 @@ statement
     | assignment ';'
     | ifStatement
     | printStatement ';'
+    | forLoop
     ;
 
 variableDeclaration : TYPE ID '=' expression ;
@@ -27,9 +28,18 @@ intAddOp : '+' | '-' ;
 ifStatement : 'if' '(' expression relationOp expression ')' '{' statement '}'
     ('else' '{' statement '}') ;
 
-relationOp : '==' | '!=' ;
+relationOp : '==' | '!=' | '>' | '<' | '>=' | '<=';
 
 printStatement : PRINT '(' expression ')' ;
+
+//--------------------------------------------
+forLoop
+    : 'for' '(' initialization ';' condition ';' increment ')' '{' statement* '}' ;
+
+initialization: variableDeclaration | assignment ;
+condition: expression relationOp expression ;
+increment: assignment ;
+//-------------------------------------------
 
 TYPE    : 'int'
         | 'bool'
