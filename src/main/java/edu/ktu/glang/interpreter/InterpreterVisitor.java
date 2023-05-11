@@ -130,19 +130,20 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
     public Integer visitIncrement(GLangParser.IncrementContext ctx) {
         String varName = ctx.ID(0).getText(); // get the variable name
         int currentValue = (int) symbolTable.get(varName); // get the current value
-        int newValue;
+        int incrementValue = Integer.parseInt(ctx.INT().getText()); // get the increment value
+
         if (ctx.getChild(1).getText().equals("++")) { // handle i++ case
-            newValue = currentValue + 1;
+            currentValue++;
         } else if (ctx.getChild(1).getText().equals("--")) { // handle i-- case
-            newValue = currentValue - 1;
-        } else { // handle i = i + x case
-            String rhsVarName = ctx.ID(1).getText();
-            int rhsValue = (int) symbolTable.get(rhsVarName);
-            int incrementValue = Integer.parseInt(ctx.INT().getText());
-            newValue = rhsValue + incrementValue;
+            currentValue--;
+        } else if (ctx.getChild(1).getText().equals("+=")) { // handle i += x case
+            currentValue += incrementValue;
+        } else if (ctx.getChild(1).getText().equals("-=")) { // handle i -= x case
+            currentValue -= incrementValue;
         }
-        symbolTable.put(varName, newValue); // update the symbol table
-        return newValue;
+
+        symbolTable.put(varName, currentValue); // update the symbol table
+        return currentValue;
     }
     
     @Override
