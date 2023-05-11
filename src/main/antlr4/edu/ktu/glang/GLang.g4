@@ -39,7 +39,7 @@ forLoop
 
 initialization: variableDeclaration | assignment ;
 condition: expression relationOp expression ;
-increment: ID ('++' | ('=' expression intAddOp expression)) ;
+increment: ID ('++' | ('=' ID intAddOp INT)) ;
 //-------------------------------------------
 switchStatement: 'switch' '(' expression ')' '{' caseStatement* defaultStatement? '}';
 

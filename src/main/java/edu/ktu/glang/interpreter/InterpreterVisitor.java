@@ -2,6 +2,8 @@ package edu.ktu.glang.interpreter;
 
 import edu.ktu.glang.GLangBaseVisitor;
 import edu.ktu.glang.GLangParser;
+import org.antlr.v4.runtime.CommonToken;
+import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
 
 public class InterpreterVisitor extends GLangBaseVisitor<Object> {
@@ -112,7 +114,7 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         visit(ctx.initialization());
 
         // Loop while the condition is true
-        while ((boolean) visitCondition(ctx.condition())) {
+        while ((boolean) visit(ctx.condition())) {
             // Execute the statements in the loop body
             for (GLangParser.StatementContext stmt : ctx.statement()) {
                 visit(stmt);
@@ -127,19 +129,45 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
     @Override
     public Integer visitIncrement(GLangParser.IncrementContext ctx) {
         // Get the name of the variable to increment
-        String varName = ctx.ID().getText();
+        String varName = ctx.ID(0).getText();
 
-        // Get the current value of the variable from the symbol table
-        int currentValue = (int)symbolTable.get(varName);
+        // Check if the increment is of the form 'i++'
+        if (ctx.getChildCount() == 2) {
+            // Get the current value of the variable from the symbol table
+            int currentValue = (int) symbolTable.get(varName);
 
-        // Increment the variable
-        int newValue = currentValue + 1;
+            // Increment the variable
+            int newValue = currentValue + 1;
 
-        // Update the symbol table with the new value
-        symbolTable.put(varName, newValue);
+            // Update the symbol table with the new value
+            symbolTable.put(varName, newValue);
 
-        // Return the new value
-        return newValue;
+            // Return the new value
+            return newValue;
+        }
+        // Otherwise, the increment must be of the form 'i = i + x'
+        else if (ctx.getChildCount() == 5) {
+            // Get the name of the variable on the right-hand side of the assignment
+            String rhsVarName = ctx.ID(1).getText();
+
+            // Get the current value of the right-hand side variable from the symbol table
+            int rhsValue = (int) symbolTable.get(rhsVarName);
+
+            // Get the increment value from the AST
+            int incrementValue = Integer.parseInt(ctx.INT().getText());
+
+            // Compute the new value of the variable
+            int newValue = rhsValue + incrementValue;
+
+            // Update the symbol table with the new value
+            symbolTable.put(varName, newValue);
+
+            // Return the new value
+            return newValue;
+        } else {
+            // This should never happen
+            return 0;
+        }
     }
     
     @Override
