@@ -8,6 +8,7 @@ statement
     | ifStatement
     | printStatement ';'
     | forLoop
+    | switchStatement
     ;
 
 variableDeclaration : TYPE ID '=' expression ;
