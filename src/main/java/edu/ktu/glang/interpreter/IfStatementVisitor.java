@@ -18,36 +18,70 @@ public class IfStatementVisitor extends GLangBaseVisitor<Object> {
         Object leftObj = parent.visit(ctx.expression(0));
         Object rightObj = parent.visit(ctx.expression(1));
 
-        // Try to parse the objects as integers
-        int left, right;
-        try {
-            left = Integer.parseInt(leftObj.toString());
-            right = Integer.parseInt(rightObj.toString());
-        } catch (NumberFormatException e) {
-            throw new RuntimeException("Cannot parse input as integers.");
-        }
-
         // Get the relation operator from the context
         TerminalNode relOpNode = (TerminalNode) ctx.relationOp().getChild(0);
         String relOp = relOpNode.getText();
 
         // Resolve the condition and execute the appropriate statement
-        if (resolveCondition(left, right, relOp)) {
+        if (resolveCondition(leftObj, rightObj, relOp)) {
             return parent.visit(ctx.statement(0));
-        } else {
+        } else if (ctx.statement().size() > 1) { // check if there is an else statement
             return parent.visit(ctx.statement(1));
         }
+
+        return null; // or return any default value
     }
 
-    private static boolean resolveCondition(int left, int right, String relOp) {
-        return switch (relOp) {
-            case "==" -> left == right;
-            case "!=" -> left != right;
-            case ">" -> left > right;
-            case "<" -> left < right;
-            case ">=" -> left >= right;
-            case "<=" -> left <= right;
+
+    private boolean resolveCondition(Object left, Object right, String relOp) {
+        switch (relOp) {
+            case "==" -> {
+                if(left instanceof Integer && right instanceof Integer) {
+                    return ((Integer) left).intValue() == ((Integer) right).intValue();
+                } else if (left instanceof String && right instanceof String) {
+                    return ((String) left).equals((String) right);
+                } else {
+                    throw new RuntimeException("Incompatible types.");
+                }
+            }
+            case "!=" -> {
+                if(left instanceof Integer && right instanceof Integer) {
+                    return ((Integer) left).intValue() != ((Integer) right).intValue();
+                } else if (left instanceof String && right instanceof String) {
+                    return !((String) left).equals((String) right);
+                } else {
+                    throw new RuntimeException("Incompatible types.");
+                }
+            }
+            case ">" -> {
+                if(left instanceof Integer && right instanceof Integer) {
+                    return (Integer)left > (Integer)right;
+                } else {
+                    throw new RuntimeException("Incompatible types or unsupported operator for these types.");
+                }
+            }
+            case "<" -> {
+                if(left instanceof Integer && right instanceof Integer) {
+                    return (Integer)left < (Integer)right;
+                } else {
+                    throw new RuntimeException("Incompatible types or unsupported operator for these types.");
+                }
+            }
+            case ">=" -> {
+                if(left instanceof Integer && right instanceof Integer) {
+                    return (Integer)left >= (Integer)right;
+                } else {
+                    throw new RuntimeException("Incompatible types or unsupported operator for these types.");
+                }
+            }
+            case "<=" -> {
+                if(left instanceof Integer && right instanceof Integer) {
+                    return (Integer)left <= (Integer)right;
+                } else {
+                    throw new RuntimeException("Incompatible types or unsupported operator for these types.");
+                }
+            }
             default -> throw new RuntimeException("Unsupported operator.");
-        };
+        }
     }
 }

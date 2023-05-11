@@ -166,6 +166,13 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         }
     }
 
-
+    @Override
+    public Object visitStringExpression(GLangParser.StringExpressionContext ctx) {
+        String str = ctx.STRING().getText();
+        // Remove the leading and trailing quotation marks
+        str = str.substring(1, str.length() - 1);
+        // Return the modified string
+        return str;
+    }
 
 }

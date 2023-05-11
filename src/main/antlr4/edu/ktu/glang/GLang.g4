@@ -18,6 +18,7 @@ assignment : ID '=' expression ;
 expression
     : INT                               #intExpression
     | ID                                #idExpression
+    | STRING                            #stringExpression
     | '(' expression ')'                #parenthesesExpression
     | expression intMultiOp expression  #intMultiOpExpression
     | expression intAddOp expression    #intAddOpExpression
@@ -27,7 +28,7 @@ intMultiOp : '*' | '/' | '%' ;
 intAddOp : '+' | '-' ;
 
 ifStatement : 'if' '(' expression relationOp expression ')' '{' statement '}'
-    ('else' '{' statement '}') ;
+    ('else' '{' statement '}')? ;
 
 relationOp : '==' | '!=' | '>' | '<' | '>=' | '<=';
 
@@ -50,11 +51,14 @@ defaultStatement: 'default' ':' statement*;
 
 TYPE    : 'int'
         | 'bool'
+        | 'string'
         ;
 
 PRINT   : 'print';
-ID      : [a-zA-Z]+ ;
+STRING : ["] ( ~["\r\n\\] | '\\' ~[\r\n] )* ["] ;
+ID      : [a-zA-Z_][a-zA-Z_0-9]* ;
 INT     : [0-9]+ ;
+
 
 COMMENT : ( '//' ~[\r\n]* | '/*' .*? '*/' ) -> skip ;
 WS      : [ \t\r\n]+ -> skip ;
