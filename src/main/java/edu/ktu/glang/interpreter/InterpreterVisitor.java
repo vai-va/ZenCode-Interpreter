@@ -124,6 +124,23 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
 
         return null;
     }
+    @Override
+    public Integer visitIncrement(GLangParser.IncrementContext ctx) {
+        // Get the name of the variable to increment
+        String varName = ctx.ID().getText();
+
+        // Get the current value of the variable from the symbol table
+        int currentValue = (int)symbolTable.get(varName);
+
+        // Increment the variable
+        int newValue = currentValue + 1;
+
+        // Update the symbol table with the new value
+        symbolTable.put(varName, newValue);
+
+        // Return the new value
+        return newValue;
+    }
     
     @Override
     public Object visitSwitchStatement(GLangParser.SwitchStatementContext ctx) {
