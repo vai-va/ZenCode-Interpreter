@@ -12,3 +12,13 @@ for (int i = 0; i < 10; i = i + 1) {
     sum = sum + i;
     print(sum);
 }
+
+int num = 8;
+switch(num)
+{
+   case 8 : print(8);
+
+   case 7 : print(7);
+
+   default : print(1);
+}
