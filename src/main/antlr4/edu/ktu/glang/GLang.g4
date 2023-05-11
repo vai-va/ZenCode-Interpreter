@@ -9,6 +9,7 @@ statement
     | printStatement ';'
     | forLoop
     | switchStatement
+    | increment ';'
     ;
 
 variableDeclaration : TYPE ID '=' expression ;

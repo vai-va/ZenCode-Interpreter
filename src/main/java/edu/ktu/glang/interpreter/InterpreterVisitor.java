@@ -130,7 +130,7 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
     public Integer visitIncrement(GLangParser.IncrementContext ctx) {
         String varName = ctx.ID(0).getText(); // get the variable name
         int currentValue = (int) symbolTable.get(varName); // get the current value
-        int incrementValue = Integer.parseInt(ctx.INT().getText()); // get the increment value
+        int incrementValue = ctx.INT() != null ? Integer.parseInt(ctx.INT().getText()) : 1; // get the increment value
 
         if (ctx.getChild(1).getText().equals("++")) { // handle i++ case
             currentValue++;

@@ -8,6 +8,10 @@ if (a != 69) {
   print(2);
 }
 
+int x = 5;
+x -= 5;
+print(x);
+
 for (int i = 10; i > 1; i -= 3) {
     print(i);
 }
