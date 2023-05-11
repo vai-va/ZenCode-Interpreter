@@ -124,6 +124,30 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
 
         return null;
     }
+    
+    @Override
+    public Object visitSwitchStatement(GLangParser.SwitchStatementContext ctx) {
+        Object value = visit(ctx.expression());
+        boolean foundMatch = false;
+
+        for (GLangParser.CaseStatementContext caseCtx : ctx.caseStatement()) {
+            Object caseValue = visit(caseCtx.expression());
+            if (value.equals(caseValue)) {
+                // Execute the statements inside the matching case
+                foundMatch = true;
+                for (GLangParser.StatementContext stmt : caseCtx.statement()) {
+                    visit(stmt);
+                }
+                break;
+            }
+        }
+        if (!foundMatch && ctx.defaultStatement() != null) {
+            for (GLangParser.StatementContext stmt : ctx.defaultStatement().statement()) {
+                visit(stmt);
+            }
+        }
+        return null;
+    }
 
     @Override
     public Object visitCondition(GLangParser.ConditionContext ctx) {
