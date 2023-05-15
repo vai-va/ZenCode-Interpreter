@@ -22,3 +22,15 @@ switch(num)
 
    default : print(1);
 }
+
+string name1 = "vardas1";
+string name2 = "vardas2";
+string _name3 = "vardas1";
+
+if (name1 == name2){
+    print("Vardai name1 ir name2 yra vienodi");
+}
+
+if (name1 == _name3){
+    print("Vardai name1 ir _name3 yra vienodi");
+}
