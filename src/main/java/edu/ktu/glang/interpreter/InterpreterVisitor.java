@@ -85,12 +85,9 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
                 SYSTEM_OUT.append(element.toString()).append("\n");
             }
         } else {
-            // Print a variable identifier
-            String varName = ctx.expression().getText();
-            Object varValue = symbolTable.get(varName);
-            if (varValue != null) {
-                SYSTEM_OUT.append(varValue.toString()).append("\n");
-            }
+            String text = visit(ctx.expression()).toString();
+            //System.out.println(text);
+            SYSTEM_OUT.append(text).append("\n");
         }
 
         return null;
