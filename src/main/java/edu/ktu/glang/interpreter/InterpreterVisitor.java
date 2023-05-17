@@ -41,15 +41,18 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         return null;
     }
 
-    @Override
+   @Override
     public Object visitAssignment(GLangParser.AssignmentContext ctx) {
         String varName = ctx.ID().getText();
         Object value = visit(ctx.expression());
         if (value instanceof List<?>) {
             List<?> listValue = (List<?>) value;
             this.symbolTable.put(varName, listValue);
+        } else if (value instanceof Integer) {
+            int intValue = (Integer) value;
+            this.symbolTable.put(varName, intValue);
         } else {
-            throw new RuntimeException("Invalid assignment. Expected an array literal.");
+            throw new RuntimeException("Invalid assignment. Expected an array literal or an integer value.");
         }
         return null;
     }
