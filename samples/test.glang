@@ -1,0 +1,79 @@
+int a = 42;
+int sum = 0;
+print(a);
+
+print(a+sum);
+
+if (a != 69) {
+  print(1);
+} else {
+  print(2);
+}
+
+int x = 5;
+x -= 5;
+print(x);
+
+for (int i = 10; i > 1; i -= 3) {
+    print(i);
+}
+
+int num = 8;
+switch(num)
+{
+   case 8 : print(8);
+
+   case 7 : print(7);
+
+   default : print(1);
+}
+
+string name1 = "vardas1";
+string name2 = "vardas2";
+string _name3 = "vardas1";
+
+if (name1 == name2){
+    print(1);
+    print("Vardai name1 ir name2 yra vienodi");
+}
+
+if (name1 == _name3){
+    print("Vardai name1 ir _name3 yra vienodi");
+}
+
+func sum1(d,f) {
+    return d+f
+}
+
+print(sum1(1, sum1(2, sum1(3,4))));
+
+func recursiveSum(a) {
+    print(a);
+    if (a >= 10) {
+        return a
+    } else {
+        return recursiveSum(a+1)
+    }
+}
+
+print(recursiveSum(0));
+
+print("");
+users = [{ name = "Alice", age = 25, is_active = "false" },
+         { name = "Bob", age = 26, is_active = "false"}];
+let filter_rules = [{ type = "string", property = "name", value = "Alice"}];
+let filtered_users = ZenFilter(users, filter_rules);
+print(filtered_users);
+
+print("");
+print("Fibonacci seka:");
+int fib = 1;
+int prevFib = 1;
+int temp = 0;
+for(int j = 2; j < 20; j++)
+{
+    temp = fib;
+    fib = fib + prevFib;
+    prevFib = temp;
+    print(fib);
+}
