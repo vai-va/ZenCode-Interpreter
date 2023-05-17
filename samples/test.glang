@@ -88,3 +88,5 @@ func voidFunction(){
     return;
 }
 voidFunction();
+
+printf("test.txt", filtered_users);
