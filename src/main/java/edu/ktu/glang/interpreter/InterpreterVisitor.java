@@ -2,6 +2,8 @@ package edu.ktu.glang.interpreter;
 
 import edu.ktu.glang.GLangBaseVisitor;
 import edu.ktu.glang.GLangParser;
+import org.antlr.v4.runtime.CommonToken;
+import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
 
 public class InterpreterVisitor extends GLangBaseVisitor<Object> {
@@ -112,7 +114,7 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         visit(ctx.initialization());
 
         // Loop while the condition is true
-        while ((boolean) visitCondition(ctx.condition())) {
+        while ((boolean) visit(ctx.condition())) {
             // Execute the statements in the loop body
             for (GLangParser.StatementContext stmt : ctx.statement()) {
                 visit(stmt);
@@ -123,6 +125,25 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         }
 
         return null;
+    }
+    @Override
+    public Integer visitIncrement(GLangParser.IncrementContext ctx) {
+        String varName = ctx.ID(0).getText(); // get the variable name
+        int currentValue = (int) symbolTable.get(varName); // get the current value
+        int incrementValue = ctx.INT() != null ? Integer.parseInt(ctx.INT().getText()) : 1; // get the increment value
+
+        if (ctx.getChild(1).getText().equals("++")) { // handle i++ case
+            currentValue++;
+        } else if (ctx.getChild(1).getText().equals("--")) { // handle i-- case
+            currentValue--;
+        } else if (ctx.getChild(1).getText().equals("+=")) { // handle i += x case
+            currentValue += incrementValue;
+        } else if (ctx.getChild(1).getText().equals("-=")) { // handle i -= x case
+            currentValue -= incrementValue;
+        }
+
+        symbolTable.put(varName, currentValue); // update the symbol table
+        return currentValue;
     }
     
     @Override
