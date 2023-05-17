@@ -3,7 +3,10 @@ package edu.ktu.glang.interpreter;
 import edu.ktu.glang.GLangBaseVisitor;
 import edu.ktu.glang.GLangParser;
 import org.antlr.v4.runtime.CommonToken;
+import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
+
+import java.util.*;
 
 
 public class InterpreterVisitor extends GLangBaseVisitor<Object> {
@@ -12,6 +15,11 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
 
     private final SymbolTable symbolTable;
     private final IfStatementVisitor ifStatementVisitor;
+    private final Stack<GLangScope> scopeStack = new Stack<>();
+    private GLangScope currentScope = new GLangScope();
+
+
+    private final Map<String, GLangParser.FunctionDeclarationContext> functions = new HashMap<>();
 
     public InterpreterVisitor(SymbolTable symbolTable) {
         this.symbolTable = symbolTable;
@@ -56,7 +64,15 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
     @Override
     public Object visitIdExpression(GLangParser.IdExpressionContext ctx) {
         String varName = ctx.ID().getText();
-        return this.symbolTable.get(varName);
+        if (currentScope.isDeclared(varName)) {
+            return currentScope.resolveVariable(varName);
+        }
+        else if (this.symbolTable.contains(varName)) {
+            return this.symbolTable.get(varName);
+        }
+        else {
+            throw new RuntimeException("Undeclared variable: " + varName);
+        }
     }
 
     @Override
@@ -145,7 +161,7 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         symbolTable.put(varName, currentValue); // update the symbol table
         return currentValue;
     }
-    
+
     @Override
     public Object visitSwitchStatement(GLangParser.SwitchStatementContext ctx) {
         Object value = visit(ctx.expression());
@@ -194,6 +210,73 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         str = str.substring(1, str.length() - 1);
         // Return the modified string
         return str;
+    }
+
+
+    @Override
+    public Object visitReturnStatement(GLangParser.ReturnStatementContext ctx) {
+        if (ctx.expression() == null) {
+            return new ReturnValue(null);
+        } else {
+            return new ReturnValue(this.visit(ctx.expression()));
+        }
+    }
+    @Override
+    protected boolean shouldVisitNextChild(RuleNode node, Object currentResult) {
+        return !(currentResult instanceof ReturnValue);
+    }
+    @Override
+    public Object visitFunctionDeclaration(GLangParser.FunctionDeclarationContext ctx) {
+        String functionName = ctx.ID().getText();
+
+        //TODO create Function class that has constructor(FunctionDeclarationContext), invoke method
+        //TODO validate if does not exist
+        //TODO probably something else
+        this.functions.put(functionName, ctx);
+        return null;
+    }
+    @Override
+    public Object visitFunctionCall(GLangParser.FunctionCallContext ctx) {
+
+        String functionName = ctx.ID().getText();
+        //TODO validate if exists
+        GLangParser.FunctionDeclarationContext function = this.functions.get(functionName);
+
+        //TODO validate args count
+
+        List<Object> arguments = new ArrayList<>();
+        if (ctx.expressionList() != null) {
+            for (var expr : ctx.expressionList().expression()) {
+                arguments.add(this.visit(expr));
+            }
+        }
+
+        //TODO validate args types
+
+        GLangScope functionScope = new GLangScope();
+
+        if (function.paramList() != null) {
+            for (int i = 0; i < function.paramList().ID().size(); i++) {
+                String paramName = function.paramList().ID(i).getText();
+                functionScope.declareVariable(paramName, arguments.get(i));
+            }
+        }
+
+        scopeStack.push(currentScope);
+        currentScope = functionScope;
+        ReturnValue value = (ReturnValue) this.visitFunctionBody(function.functionBody());
+        currentScope = scopeStack.pop();
+
+        return value.getValue();
+    }
+
+    @Override
+    public Object visitFunctionBody(GLangParser.FunctionBodyContext ctx) {
+        Object value = super.visitFunctionBody(ctx);
+        if (value instanceof ReturnValue) {
+            return value;
+        }
+        return new ReturnValue(null);
     }
 
 }

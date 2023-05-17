@@ -2,6 +2,8 @@ int a = 42;
 int sum = 0;
 print(a);
 
+print(a+sum);
+
 if (a != 69) {
   print(1);
 } else {
@@ -31,9 +33,27 @@ string name2 = "vardas2";
 string _name3 = "vardas1";
 
 if (name1 == name2){
+    print(1);
     print("Vardai name1 ir name2 yra vienodi");
 }
 
 if (name1 == _name3){
     print("Vardai name1 ir _name3 yra vienodi");
 }
+
+func sum1(d,f) {
+    return d+f
+}
+
+print(sum1(1, sum1(2, sum1(3,4))));
+
+func recursiveSum(a) {
+    print(a);
+    if (a >= 10) {
+        return a
+    } else {
+        return recursiveSum(a+1)
+    }
+}
+
+print(recursiveSum(0));
