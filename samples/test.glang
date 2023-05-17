@@ -45,8 +45,8 @@ if (name1 == _name3){
 
 print("");
 users = [{ name = "Alice", age = 25, is_active = "false" },
-         { name = "Bob", age = 26, is_active = "false"}];
-let filter_rules = [{ type = "string", property = "name", value = "Alice"}];
+         { name = "Bob", age = 26, is_active = "true"}];
+let filter_rules = [{ type = "int", property = "age", value = "26"}];
 let filtered_users = ZenFilter(users, filter_rules);
 print(filtered_users);
 

@@ -397,6 +397,16 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
             String name = (String) value1;
             return name.equalsIgnoreCase(value2);
         }
+        else if(value1 instanceof Integer)
+        {
+            int name = (Integer) value1;
+            return name ==  Integer.parseInt(value2);
+        }
+        else if(value1 instanceof Boolean)
+        {
+            Boolean name = (Boolean) value1;
+            return name ==  Boolean.parseBoolean(value2);
+        }
         return false;
     }
 
