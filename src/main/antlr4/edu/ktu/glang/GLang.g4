@@ -23,8 +23,11 @@ statement
  | zenFilterStatement ';'
  | filterRulesStatement ';'
  | printArrayStatement ';'
+ | printFileStatement ';'
  ;
-
+ 
+printFileStatement : PRINTFILE '('STRING','expression')' ;
+ 
 filterRulesStatement : 'let' ID '=' '[' filterRule (',' filterRule)* ']' ;
 
 zenFilterStatement : 'let' ID '=' 'ZenFilter' '(' ID ',' ID ')' ;
@@ -112,6 +115,7 @@ TYPE    : 'int'
         ;
 
 PRINT   : 'print';
+PRINTFILE : 'printf';
 STRING : ["] ( ~["\r\n\\] | '\\' ~[\r\n] )* ["] ;
 ID      : [a-zA-Z_][a-zA-Z_0-9]* ;
 INT     : [0-9]+ ;

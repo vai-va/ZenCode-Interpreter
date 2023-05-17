@@ -5,7 +5,10 @@ import edu.ktu.glang.GLangParser;
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
+import java.io.FileWriter;
+import java.io.BufferedReader;
 
+import java.io.IOException;
 import java.util.*;
 
 
@@ -18,7 +21,7 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
     private final Stack<GLangScope> scopeStack = new Stack<>();
     private GLangScope currentScope = new GLangScope();
 
-
+    private FileWriter fileWriter;
     private final Map<String, GLangParser.FunctionDeclarationContext> functions = new HashMap<>();
 
     public InterpreterVisitor(SymbolTable symbolTable) {
@@ -54,7 +57,11 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         } else if (value instanceof Integer) {
             int intValue = (Integer) value;
             this.symbolTable.put(varName, intValue);
-        } else {
+        }
+        else if (value instanceof Boolean) {
+            boolean boolValue = (Boolean) value;
+            this.symbolTable.put(varName, boolValue);
+        }else {
             throw new RuntimeException("Invalid assignment. Expected an array literal or an integer value.");
         }
         return null;
@@ -67,7 +74,14 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
 
     @Override
     public Object visitBooleanExpression(GLangParser.BooleanExpressionContext ctx) {
-        return Boolean.parseBoolean(ctx.BOOLEAN().getText());
+        String booleanValue = ctx.BOOLEAN().getText();
+        if (booleanValue.equals("true")) {
+            return true;
+        } else if (booleanValue.equals("false")) {
+            return false;
+        } else {
+            throw new IllegalArgumentException("Invalid boolean value: " + booleanValue);
+        }
     }
 
     @Override
@@ -104,6 +118,28 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
             SYSTEM_OUT.append(text).append("\n");
         }
 
+        return null;
+    }
+
+    @Override
+    public Object visitPrintFileStatement(GLangParser.PrintFileStatementContext ctx) {
+        String filename = ctx.STRING().getText().replaceAll("\"", "");
+        String text = visit(ctx.expression()).toString();
+        try {
+            fileWriter = new FileWriter(filename, true);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            fileWriter.append(text).append("\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            fileWriter.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
 
