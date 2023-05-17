@@ -9,6 +9,7 @@ statement
     | printStatement ';'
     | forLoop
     | switchStatement
+    | increment ';'
     ;
 
 variableDeclaration : TYPE ID '=' expression ;
@@ -40,7 +41,7 @@ forLoop
 
 initialization: variableDeclaration | assignment ;
 condition: expression relationOp expression ;
-increment: assignment ;
+increment: ID ('++' | '--' | ('=' ID intAddOp INT) | ('+=' INT) | ('-=' INT)) ;
 //-------------------------------------------
 switchStatement: 'switch' '(' expression ')' '{' caseStatement* defaultStatement? '}';
 
