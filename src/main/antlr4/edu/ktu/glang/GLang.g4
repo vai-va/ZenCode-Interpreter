@@ -20,7 +20,16 @@ statement
  | functionCall
  | systemFunctionCall
  | returnStatement
+ | zenFilterStatement ';'
+ | filterRulesStatement ';'
+ | printArrayStatement ';'
  ;
+
+filterRulesStatement : 'let' ID '=' '[' filterRule (',' filterRule)* ']' ;
+
+zenFilterStatement : 'let' ID '=' 'ZenFilter' '(' ID ',' ID ')' ;
+
+printArrayStatement : PRINT '(' ID ')' ;
 
 variableDeclaration : TYPE ID '=' expression ;
 
@@ -30,10 +39,12 @@ expression
  : INT                               #intExpression
  | ID                                #idExpression
  | STRING                            #stringExpression
+ | BOOLEAN                           #booleanExpression
  | '(' expression ')'                #parenthesesExpression
  | expression intMultiOp expression  #intMultiOpExpression
  | expression intAddOp expression    #intAddOpExpression
  | functionCall                      #functionCallExpression
+ | arrayLiteral                      #arrayLiteralExpression
  ;
 
 intMultiOp : '*' | '/' | '%' ;
@@ -82,6 +93,18 @@ caseStatement: 'case' expression ':' statement*;
 
 defaultStatement: 'default' ':' statement*;
 //-------------------------------------------
+arrayLiteral : '[' arrayElement (',' arrayElement)* ']' ;
+
+arrayElement : objectLiteral | expression ;
+
+objectLiteral : '{' property (',' property)* '}' ;
+
+property : ID '=' expression ;
+//----------------------------------------------
+
+filterRule : '{' 'type' '=' STRING ',' 'property' '=' STRING ',' 'value' '=' STRING '}' ;
+
+//----------------------------------------------
 
 TYPE    : 'int'
         | 'bool'
@@ -92,6 +115,7 @@ PRINT   : 'print';
 STRING : ["] ( ~["\r\n\\] | '\\' ~[\r\n] )* ["] ;
 ID      : [a-zA-Z_][a-zA-Z_0-9]* ;
 INT     : [0-9]+ ;
+BOOLEAN : 'true' | 'false' ;
 
 COMMENT : ( '//' ~[\r\n]* | '/*' .*? '*/' ) -> skip ;
 WS      : [ \t\r\n]+ -> skip ;

@@ -57,3 +57,23 @@ func recursiveSum(a) {
 }
 
 print(recursiveSum(0));
+
+print("");
+users = [{ name = "Alice", age = 25, is_active = "false" },
+         { name = "Bob", age = 26, is_active = "false"}];
+let filter_rules = [{ type = "string", property = "name", value = "Alice"}];
+let filtered_users = ZenFilter(users, filter_rules);
+print(filtered_users);
+
+print("");
+print("Fibonacci seka:");
+int fib = 1;
+int prevFib = 1;
+int temp = 0;
+for(int j = 2; j < 20; j++)
+{
+    temp = fib;
+    fib = fib + prevFib;
+    prevFib = temp;
+    print(fib);
+}
