@@ -37,3 +37,10 @@ if (name1 == name2){
 if (name1 == _name3){
     print("Vardai name1 ir _name3 yra vienodi");
 }
+
+print("");
+users = [{ name = "Alice", age = 25, is_active = "false" },
+         { name = "Bob", age = 26, is_active = "false"}];
+let filter_rules = [{ type = "string", property = "name", value = "Alice"}];
+let filtered_users = ZenFilter(users, filter_rules);
+print(filtered_users);
