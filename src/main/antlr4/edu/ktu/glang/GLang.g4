@@ -17,7 +17,7 @@ statement
  | forLoop
  | switchStatement
  | increment ';'
- | functionCall
+ | functionCall ';'
  | systemFunctionCall
  | returnStatement ';'
  | zenFilterStatement ';'
