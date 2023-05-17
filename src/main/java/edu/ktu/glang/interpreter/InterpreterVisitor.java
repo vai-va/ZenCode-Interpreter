@@ -5,6 +5,11 @@ import edu.ktu.glang.GLangParser;
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class InterpreterVisitor extends GLangBaseVisitor<Object> {
 
@@ -36,14 +41,18 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         return null;
     }
 
-    @Override
+   @Override
     public Object visitAssignment(GLangParser.AssignmentContext ctx) {
         String varName = ctx.ID().getText();
         Object value = visit(ctx.expression());
-        if (this.symbolTable.contains(varName)) {
-            this.symbolTable.put(varName, value);
+        if (value instanceof List<?>) {
+            List<?> listValue = (List<?>) value;
+            this.symbolTable.put(varName, listValue);
+        } else if (value instanceof Integer) {
+            int intValue = (Integer) value;
+            this.symbolTable.put(varName, intValue);
         } else {
-            throw new RuntimeException("Undeclared variable.");
+            throw new RuntimeException("Invalid assignment. Expected an array literal or an integer value.");
         }
         return null;
     }
@@ -54,6 +63,11 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitBooleanExpression(GLangParser.BooleanExpressionContext ctx) {
+        return Boolean.parseBoolean(ctx.BOOLEAN().getText());
+    }
+
+    @Override
     public Object visitIdExpression(GLangParser.IdExpressionContext ctx) {
         String varName = ctx.ID().getText();
         return this.symbolTable.get(varName);
@@ -61,9 +75,24 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
 
     @Override
     public Object visitPrintStatement(GLangParser.PrintStatementContext ctx) {
-        String text = visit(ctx.expression()).toString();
-        //System.out.println(text);
-        SYSTEM_OUT.append(text).append("\n");
+        Object expressionValue = visit(ctx.expression());
+
+        if (expressionValue instanceof String) {
+            // Print a regular string expression
+            String text = expressionValue.toString();
+            SYSTEM_OUT.append(text).append("\n");
+        } else if (expressionValue instanceof List) {
+            // Print an array or list
+            List<Object> list = (List<Object>) expressionValue;
+            for (Object element : list) {
+                SYSTEM_OUT.append(element.toString()).append("\n");
+            }
+        } else {
+            String text = visit(ctx.expression()).toString();
+            //System.out.println(text);
+            SYSTEM_OUT.append(text).append("\n");
+        }
+
         return null;
     }
 
@@ -196,4 +225,86 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         return str;
     }
 
+    @Override
+    public Object visitArrayLiteral(GLangParser.ArrayLiteralContext ctx) {
+        List<Object> elements = new ArrayList<>();
+        for (GLangParser.ArrayElementContext elementCtx : ctx.arrayElement()) {
+            elements.add(visit(elementCtx));
+        }
+        return elements;
+    }
+
+    @Override
+    public Object visitObjectLiteral(GLangParser.ObjectLiteralContext ctx) {
+        Map<String, Object> properties = new HashMap<>();
+        for (GLangParser.PropertyContext propertyCtx : ctx.property()) {
+            String propertyName = propertyCtx.ID().getText();
+            Object value = visit(propertyCtx.expression());
+            properties.put(propertyName, value);
+        }
+        return properties;
+    }
+
+    @Override
+    public Object visitFilterRule(GLangParser.FilterRuleContext ctx) {
+        String type = ctx.STRING(0).getText();
+        String property = ctx.STRING(1).getText();
+        String value = ctx.STRING(2).getText();
+
+        // Remove the leading and trailing quotation marks
+        type = type.substring(1, type.length() - 1);
+        property = property.substring(1, property.length() - 1);
+        value = value.substring(1, value.length() - 1);
+
+        Map<String, Object> filterRule = new HashMap<>();
+        filterRule.put("type", type);
+        filterRule.put("property", property);
+        filterRule.put("value", value);
+
+        return filterRule;
+    }
+
+    @Override
+    public Object visitZenFilterStatement(GLangParser.ZenFilterStatementContext ctx) {
+        String filteredUsersName = ctx.ID(0).getText();
+        String usersName = ctx.ID(1).getText();
+        String filterRulesName = ctx.ID(2).getText();
+
+        List<Map<String, Object>> users = (List<Map<String, Object>>) symbolTable.get(usersName);
+        List<Map<String, Object>> filterRules = (List<Map<String, Object>>) symbolTable.get(filterRulesName);
+
+        List<Map<String, Object>> filteredUsers = new ArrayList<>();
+
+        for (Map<String, Object> user : users) {
+            boolean passFilter = true;
+
+            if(filterRules != null) {
+                for (Map<String, Object> filterRule : filterRules) {
+                    String property = (String) filterRule.get("property");
+                    String value = (String) filterRule.get("value");
+
+                    if (!user.containsKey(property) || !compareValues(user.get(property), value)) {
+                        passFilter = false;
+                        break;
+                    }
+                }
+            }
+
+            if (passFilter) {
+                filteredUsers.add(user);
+            }
+        }
+
+        symbolTable.put(filteredUsersName, filteredUsers);
+
+        return null;
+    }
+
+    private boolean compareValues(Object value1, String value2) {
+        if (value1 instanceof String) {
+            String name = (String) value1;
+            return name.equalsIgnoreCase(value2);
+        }
+        return false;
+    }
 }
