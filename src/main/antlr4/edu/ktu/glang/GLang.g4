@@ -19,7 +19,7 @@ statement
  | increment ';'
  | functionCall
  | systemFunctionCall
- | returnStatement
+ | returnStatement ';'
  | zenFilterStatement ';'
  | filterRulesStatement ';'
  | printArrayStatement ';'

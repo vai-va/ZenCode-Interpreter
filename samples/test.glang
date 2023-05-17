@@ -41,9 +41,6 @@ if (name1 == _name3){
     print("Vardai name1 ir _name3 yra vienodi");
 }
 
-func sum1(d,f) {
-    return d+f
-}
 
 
 print("");
@@ -72,9 +69,9 @@ for(int j = 2; j < 20; j++)
 print("Fibonacci seka su rekursija:");
 func recursiveFibonacci(n) {
     if (n <= 1){
-        return n
+        return n;
     }
-    return (recursiveFibonacci(n-1) + recursiveFibonacci(n-2))
+    return (recursiveFibonacci(n-1) + recursiveFibonacci(n-2));
 }
 for (int k = 2; k < 21; k++)
 {
