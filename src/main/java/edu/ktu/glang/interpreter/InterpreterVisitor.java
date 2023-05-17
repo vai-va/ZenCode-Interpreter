@@ -341,6 +341,20 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
 
         return filterRule;
     }
+    
+     @Override
+    public Object visitFilterRulesStatement(GLangParser.FilterRulesStatementContext ctx) {
+        String filterRulesName = ctx.ID().getText();
+        List<Map<String, Object>> filterRules = new ArrayList<>();
+
+        for (GLangParser.FilterRuleContext filterRuleContext : ctx.filterRule()) {
+            Map<String, Object> filterRule = (Map<String, Object>) visit(filterRuleContext);
+            filterRules.add(filterRule);
+        }
+
+        symbolTable.put(filterRulesName, filterRules);
+        return null;
+    }
 
     @Override
     public Object visitZenFilterStatement(GLangParser.ZenFilterStatementContext ctx) {
