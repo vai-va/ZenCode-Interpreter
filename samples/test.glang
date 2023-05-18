@@ -59,9 +59,11 @@ if (name1 == _name3){
 
 print("");
 print("Unikali ZenFilter savybė:");
-users = [{ name = "Alice", age = 25, is_active = "false" },
-         { name = "Bob", age = 26, is_active = "true"}];
-let filter_rules = [{ type = "int", property = "age", value = "26"}];
+users = [{ name = "Alice", age = 25},
+         { name = "Bob", age = 26},
+         { name = "Bob", age = 25}];
+let filter_rules = [{ type = "int", property = "age", value = "25"},
+{ type = "string", property = "name", value = "Bob"}];
 let filtered_users = ZenFilter(users, filter_rules);
 print(filtered_users);
 
