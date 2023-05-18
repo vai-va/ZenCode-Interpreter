@@ -24,9 +24,15 @@ statement
  | filterRulesStatement ';'
  | printArrayStatement ';'
  | printFileStatement ';'
- ;
- 
-printFileStatement : PRINTFILE '('STRING','expression')' ;
+ | readfStatement ';'
+  ;
+
+ printFileStatement : PRINTFILE '('STRING','expression')' ;
+
+
+readfStatement : TYPE ID '=' READF '(' STRING ')' | ID '=' READF '(' STRING ')';
+
+READF : 'readf';
  
 filterRulesStatement : 'let' ID '=' '[' filterRule (',' filterRule)* ']' ;
 

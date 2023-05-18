@@ -1,3 +1,7 @@
+
+string filedata = readf("Data.txt");
+print(filedata);
+
 int a = 42;
 int sum = 0;
 print(a);
