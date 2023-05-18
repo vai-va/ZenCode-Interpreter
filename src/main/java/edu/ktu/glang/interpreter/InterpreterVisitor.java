@@ -153,7 +153,7 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line = reader.readLine();
             if (line != null) {
-                int value = Integer.parseInt(line);
+                String value = line;
                 symbolTable.put(variableName, value);
             } else {
                 throw new RuntimeException("Cannot read from file: " + filename);

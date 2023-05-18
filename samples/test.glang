@@ -1,5 +1,5 @@
 
-int filedata = readf("Data.txt");
+string filedata = readf("Data.txt");
 print(filedata);
 
 int a = 42;
