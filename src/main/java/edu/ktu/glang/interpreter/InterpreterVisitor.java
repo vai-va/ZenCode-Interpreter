@@ -192,7 +192,6 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
     public Object visitIntMultiOpExpression(GLangParser.IntMultiOpExpressionContext ctx) {
         Object val1 = visit(ctx.expression(0));
         Object val2 = visit(ctx.expression(1));
-        //TODO - validation etc
         return switch (ctx.intMultiOp().getText()) {
             case "*" -> (Integer) val1 * (Integer) val2;
             case "/" -> (Integer) val1 / (Integer) val2;
@@ -311,9 +310,6 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
     public Object visitFunctionDeclaration(GLangParser.FunctionDeclarationContext ctx) {
         String functionName = ctx.ID().getText();
 
-        //TODO create Function class that has constructor(FunctionDeclarationContext), invoke method
-        //TODO validate if does not exist
-        //TODO probably something else
         this.functions.put(functionName, ctx);
         return null;
     }
@@ -321,10 +317,7 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
     public Object visitFunctionCall(GLangParser.FunctionCallContext ctx) {
 
         String functionName = ctx.ID().getText();
-        //TODO validate if exists
         GLangParser.FunctionDeclarationContext function = this.functions.get(functionName);
-
-        //TODO validate args count
 
         List<Object> arguments = new ArrayList<>();
         if (ctx.expressionList() != null) {
@@ -332,8 +325,6 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
                 arguments.add(this.visit(expr));
             }
         }
-
-        //TODO validate args types
 
         GLangScope functionScope = new GLangScope();
 
