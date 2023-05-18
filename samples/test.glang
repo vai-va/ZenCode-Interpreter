@@ -1,23 +1,36 @@
+print("Failo nuskaitymas:");
+string filedata = readf("Data.txt");
+print(filedata);
+
+print("");
+print("+, -, *, /, % operacijos su int tipais:");
 int a = 42;
 int sum = 0;
-print(a);
-
 print(a+sum);
 
+print("");
+print(">, <, ==, !=, <=, >= palyginimo operatoriai:");
 if (a != 69) {
   print(1);
 } else {
   print(2);
 }
 
+print("");
+print("--, ++, +=, -=: operacijos");
 int x = 5;
 x -= 5;
 print(x);
 
+print("");
+print("Ciklas:");
 for (int i = 10; i > 1; i -= 3) {
     print(i);
 }
 
+
+print("");
+print("Switch ir case:");
 int num = 8;
 switch(num)
 {
@@ -28,12 +41,14 @@ switch(num)
    default : print(1);
 }
 
+
+print("");
+print("String tipas ir jų lyginimas:");
 string name1 = "vardas1";
 string name2 = "vardas2";
 string _name3 = "vardas1";
 
 if (name1 == name2){
-    print(1);
     print("Vardai name1 ir name2 yra vienodi");
 }
 
@@ -42,8 +57,8 @@ if (name1 == _name3){
 }
 
 
-
 print("");
+print("Unikali ZenFilter savybė:");
 users = [{ name = "Alice", age = 25, is_active = "false" },
          { name = "Bob", age = 26, is_active = "true"}];
 let filter_rules = [{ type = "int", property = "age", value = "26"}];
@@ -66,7 +81,7 @@ for(int j = 2; j < 20; j++)
 
 
 print("");
-print("Fibonacci seka su rekursija:");
+print("Fibonacci seka su rekursija funkcijoje:");
 func recursiveFibonacci(n) {
     if (n <= 1){
         return n;
@@ -80,7 +95,7 @@ for (int k = 2; k < 21; k++)
 
 
 print("");
-print("A void type function:");
+print("Void tipo funkcija:");
 func voidFunction(){
     for (int h = 1; h < 6; h++){
         print(h);
@@ -89,4 +104,6 @@ func voidFunction(){
 }
 voidFunction();
 
+print("");
+print("Taip pat galimas rašymas į failą");
 printf("test.txt", filtered_users);
