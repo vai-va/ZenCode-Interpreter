@@ -5,6 +5,8 @@ import edu.ktu.glang.GLangParser;
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNodeImpl;
+
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedReader;
 
@@ -140,6 +142,26 @@ public class InterpreterVisitor extends GLangBaseVisitor<Object> {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return null;
+    }
+
+    @Override
+    public Object visitReadfStatement(GLangParser.ReadfStatementContext ctx) {
+        String filename = ctx.STRING().getText().replaceAll("\"", "");
+        String variableName = ctx.ID().getText();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line = reader.readLine();
+            if (line != null) {
+                int value = Integer.parseInt(line);
+                symbolTable.put(variableName, value);
+            } else {
+                throw new RuntimeException("Cannot read from file: " + filename);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot read from file: " + filename, e);
+        }
+
         return null;
     }
 
